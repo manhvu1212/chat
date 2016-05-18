@@ -1,0 +1,109 @@
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    position: relative;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    color: #666;
+    background-color: #aaaaaa;
+}
+
+input, textarea, button {
+    outline: none;
+}
+
+.row {
+
+}
+
+.col {
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.col-2 {
+    width: 16.66%;
+}
+
+.col-10 {
+    width: 83.33%;
+}
+
+.btn {
+    cursor: pointer;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.container {
+    position: relative;
+    margin: auto;
+    height: 100vh;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.message {
+
+}
+
+.action {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    background-color: #d4e3e9;
+}
+
+.action .user,
+.action .form {
+    padding: 10px;
+}
+
+.action .user {
+    width: 15%;
+}
+
+.action .user img {
+    width: 100%;
+    height: auto;
+    border-radius: 100%;
+    margin: auto;
+}
+
+.action .form {
+    width: 85%;
+}
+
+.action .form textarea {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100px;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-color: #d2d6de;
+}
+
+
+@media (min-width: 480px) {
+    .container {
+        max-width: 400px;
+        max-height: 600px;
+    }
+}
+
