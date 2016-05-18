@@ -59,14 +59,14 @@ input, textarea, button {
 }
 
 .message {
-
+    overflow: auto;
 }
 
 .action {
     position: absolute;
     bottom: 0px;
     width: 100%;
-    background-color: #d4e3e9;
+    background-color: #4267b2;
 }
 
 .action .user,
