@@ -10,7 +10,7 @@ body {
     padding: 0;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 20px;
     color: #666;
     background-color: #aaaaaa;
@@ -29,10 +29,10 @@ textarea {
     -webkit-box-shadow: none;
     box-shadow: none;
     border-color: #d2d6de;
-    -moz-transition: height 1s ease;
-    -webkit-transition: height 1s ease;
-    -o-transition: height 1s ease;
-    transition: height 1s ease;
+    -moz-transition: height 0.5s linear;
+    -webkit-transition: height 0.5s linear;
+    -o-transition: height 0.5s linear;
+    transition: height 0.5s linear;
 }
 
 .row {
@@ -51,31 +51,63 @@ textarea {
     clear: both;
 }
 
-.col {
+.row .col {
     position: relative;
     float: left;
     padding-right: 10px;
     padding-left: 10px;
 }
 
+.row-right .col {
+    float: right;
+    text-align: right;
+}
+
+.col-1 {
+    width: 8.33%;
+}
+
+.col-1-2 {
+    width: 12.5%;
+}
+
 .col-2 {
     width: 16.66%;
+}
+
+.col-8 {
+    width: 66.66%;
+}
+
+.col-9 {
+    width: 75%;
 }
 
 .col-10 {
     width: 83.33%;
 }
 
+col-11 {
+    width: 91.66%;
+}
+
 .btn {
     cursor: pointer;
+    line-height: normal;
     border-radius: 3px;
     -webkit-box-shadow: none;
     box-shadow: none;
     border: 1px solid transparent;
+    background-color: #ffffff;
 }
 
 .btn-block {
     width: 100%;
+}
+
+.btn img {
+    width: 100%;
+    height: auto;
 }
 
 .container {
@@ -86,13 +118,42 @@ textarea {
     background-color: #ffffff;
 }
 
-.message {
+.user {
+    text-align: center;
+}
+
+.user img {
+    width: 100%;
+    max-width: 45px;
+    height: auto;
+    border-radius: 100%;
+    margin: auto;
+}
+
+.messages {
     overflow: auto;
     height: calc(100vh - 73px);
-    -moz-transition: height 1s ease;
-    -webkit-transition: height 1s ease;
-    -o-transition: height 1s ease;
-    transition: height 1s ease;
+    padding: 10px;
+    -moz-transition: height 0.5s linear;
+    -webkit-transition: height 0.5s linear;
+    -o-transition: height 0.5s linear;
+    transition: height 0.5s linear;
+}
+
+.messages .message {
+    display: inline-block;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #dee8eb;
+    border-radius: 4px;
+}
+
+.messages .send .message {
+    text-align: right;
+}
+
+.messages .message .content {
+
 }
 
 .action {
@@ -103,16 +164,10 @@ textarea {
     background-color: #4267b2;
 }
 
-.user img {
-    width: 100%;
-    height: auto;
-    border-radius: 100%;
-    margin: auto;
-}
-
 @media (min-width: 480px) {
     .container {
         max-width: 400px;
+        max-height: 600px;
     }
 }
 

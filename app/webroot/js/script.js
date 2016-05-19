@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $('body').append($('<div id="container" class="container">')
-        .append($('<div id="message" class="message">'))
+        .append($('<div id="messages" class="messages">'))
         .append($('<div id="action" class="action">'))
     );
 
@@ -14,24 +14,48 @@ $(document).ready(function () {
                     .append($('<textarea name="message" rows="1">')))
                 .append($('<div class="col col-2">')
                     .append($('<button type="submit" class="btn btn-block">')
-                        .html('Gửi')))
+                        .append($('<img src="/img/send.png">'))))
             )));
 
-    $('#message').html('');
+    $('#messages').html('');
 
     $('#send-message').submit(function (e) {
         e.preventDefault();
-        console.log($(this).serializeArray());
+        if ($.trim($('textarea').val()) != '') {
+            var formData = $(this).serializeArray();
+            $.ajax({
+                type: 'post',
+                url: '/send',
+                dataType: 'json',
+                data: formData,
+                success: function (response) {
+                    $('textarea').val('');
+                    var ele = $('<div class="row row-right send">')
+                        .append($('<div class="col col-1-2">')
+                            .append($('<div class="user">')
+                                .append($('<img src="/img/nobody.jpg">'))))
+                        .append($('<div class="col col-9">')
+                            .append($('<div class="message">')
+                                .append($('<div class="content">')
+                                    .html($.trim(response['message'])))
+                                .append($('<div class="time">'))));
+                    ele.find('img').load(function() {
+                        $('#messages').append(ele);
+                        $('#messages').animate({ scrollTop: ele.height() + $('#messages').scrollTop() }, 600);
+                    });
+                }
+            });
+        }
     });
 
     $('textarea')
         .on('focus', function () {
             $(this).height(80);
-            $('#message').height($('#container').height() - $('#action').outerHeight() - 33);
+            $('#messages').outerHeight($('#container').height() - $('#action').outerHeight() - 33);
         })
         .on('focusout', function () {
             $(this).height(35);
-            $('#message').height($('#container').height() - $('#action').outerHeight() + 33);
+            $('#messages').outerHeight($('#container').height() - $('#action').outerHeight() + 33);
         })
         .keypress(function (e) {
             if (e.which == 13 && !e.shiftKey) {
