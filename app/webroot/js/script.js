@@ -4,20 +4,24 @@ $(document).ready(function () {
         .append($('<div id="action" class="action">'))
     );
 
+    $('#container').css('margin-top', ($(window).height() - $('#container').height()) / 2);
+
     $('#action').append($('<div class="row">')
         .append($('<div class="col col-2">')
             .append($('<div class="user">')
                 .append($('<img src="/img/nobody.jpg">'))))
-        .append($('<div class="col col-10">')
-            .append($('<form method="post" id="send-message" class="row">')
-                .append($('<div class="col col-10">')
-                    .append($('<textarea name="message" rows="1">')))
-                .append($('<div class="col col-2">')
-                    .append($('<button type="submit" class="btn btn-block">')
-                        .append($('<img src="/img/send.png">'))))
-            )));
+        .append($('<div class="col col-8-9">')
+            .append($('<form method="post" id="send-message">')
+                .append($('<textarea name="message" rows="1">'))))
+        .append($('<div class="col col-1-2">')
+            .append($('<form method="post" id="send-image" enctype="multipart/form-data">')
+                .append($('<input type="file" name="image" accept="image/*" hidden>'))
+                .append($('<button type="button" onclick="$(\'input[type=file]\').click()" class="btn btn-block">')
+                    .append($('<img src="/img/camera.png">'))))));
 
-    $('#messages').html('');
+    $('#action img').load(function() {
+        $('#messages').outerHeight($('#container').height() - $('#action').outerHeight());
+    });
 
     $('#send-message').submit(function (e) {
         e.preventDefault();
@@ -39,12 +43,51 @@ $(document).ready(function () {
                                 .append($('<div class="content">')
                                     .html($.trim(response['message'])))
                                 .append($('<div class="time">'))));
-                    ele.find('img').load(function() {
+                    ele.find('img').load(function () {
                         $('#messages').append(ele);
-                        $('#messages').animate({ scrollTop: ele.height() + $('#messages').scrollTop() }, 600);
+                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 600);
                     });
                 }
             });
+        }
+    });
+
+    $('#send-image').submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData($('#send-image')[0]);
+        $.ajax({
+            type: 'post',
+            url: '/send/image',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response != '') {
+                    var ele = $('<div class="row row-right send">')
+                        .append($('<div class="col col-1-2">')
+                            .append($('<div class="user">')
+                                .append($('<img src="/img/nobody.jpg">'))))
+                        .append($('<div class="col col-9">')
+                            .append($('<div class="message">')
+                                .append($('<div class="content">')
+                                    .append($('<img src="' + response + '">')))
+                                .append($('<div class="time">'))));
+                    ele.find('.user img').load(function () {
+                        $('#messages').append(ele);
+                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 600);
+                    });
+                    ele.find('.content img').load(function() {
+                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 600);
+                    });
+                }
+            }
+        });
+    });
+
+    $('input[type=file]').change(function () {
+        if ($(this).val() != '') {
+            $('#send-image').trigger('submit');
         }
     });
 

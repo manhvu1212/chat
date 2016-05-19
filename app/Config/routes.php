@@ -27,6 +27,7 @@
  */
 Router::connect('/', array('controller' => 'chat', 'action' => 'home'));
 Router::connect('/send', array('controller' => 'chat', 'action' => 'send'));
+Router::connect('/send/image', array('controller' => 'chat', 'action' => 'sendImage'));
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */

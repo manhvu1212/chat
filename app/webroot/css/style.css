@@ -35,6 +35,11 @@ textarea {
     transition: height 0.5s linear;
 }
 
+img {
+    width: 100%;
+    height: auto;
+}
+
 .row {
     margin-right: -10px;
     margin-left: -10px;
@@ -79,6 +84,10 @@ textarea {
     width: 66.66%;
 }
 
+.col-8-9 {
+    width: 70.83%;
+}
+
 .col-9 {
     width: 75%;
 }
@@ -87,13 +96,13 @@ textarea {
     width: 83.33%;
 }
 
-col-11 {
+.col-11 {
     width: 91.66%;
 }
 
 .btn {
     cursor: pointer;
-    line-height: normal;
+    line-height: initial;
     border-radius: 3px;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -103,11 +112,6 @@ col-11 {
 
 .btn-block {
     width: 100%;
-}
-
-.btn img {
-    width: 100%;
-    height: auto;
 }
 
 .container {
@@ -123,16 +127,14 @@ col-11 {
 }
 
 .user img {
-    width: 100%;
     max-width: 45px;
-    height: auto;
     border-radius: 100%;
     margin: auto;
 }
 
 .messages {
     overflow: auto;
-    height: calc(100vh - 73px);
+    /*height: calc(100vh - 73px);*/
     padding: 10px;
     -moz-transition: height 0.5s linear;
     -webkit-transition: height 0.5s linear;
@@ -152,7 +154,7 @@ col-11 {
     text-align: right;
 }
 
-.messages .message .content {
+.messages .message .content img {
 
 }
 
