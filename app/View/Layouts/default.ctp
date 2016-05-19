@@ -15,7 +15,6 @@
 <body></body>
 
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<?php echo $this->Html->script('script'); ?>
 <?php echo $this->fetch('script'); ?>
 
 </html>
