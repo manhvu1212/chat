@@ -10,15 +10,15 @@ class PagesController extends AppController
 
     public function home()
     {
-//        if($this->Session->check('user')) {
-//            $this->redirect('/chat');
-//        }
+        if($this->Session->check('user')) {
+            $this->redirect('/chat');
+        }
     }
 
     public function login() {
         if ($this->request->is('post')){
             $data = $this->request->data;
-            $user = $this->User->find('first');
+            $user = $this->User->save($data);
             pr($user);
         }
     }
