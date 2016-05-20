@@ -12,7 +12,9 @@
     <?php echo $this->fetch('css'); ?>
 </head>
 
-<body></body>
+<body>
+<?php echo $this->fetch('content'); ?>
+</body>
 
 <script src="/components/jquery/dist/jquery.min.js"></script>
 <?php echo $this->fetch('script'); ?>

@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     $('body').append($('<div id="container" class="container">')
         .append($('<div id="messages" class="messages">'))
         .append($('<div id="action" class="action">'))
@@ -12,7 +13,7 @@ $(document).ready(function () {
     $('#action').append($('<div class="row">')
         .append($('<div class="col col-2">')
             .append($('<div class="user">')
-                .append($('<img src="/img/nobody.jpg">'))))
+                .append($('<img src="' + user.avatar + '">'))))
         .append($('<div class="col col-8-9">')
             .append($('<form method="post" id="send-message">')
                 .append($('<textarea name="message" rows="1">'))))
@@ -37,7 +38,7 @@ $(document).ready(function () {
                 data: formData,
                 success: function (response) {
                     $('textarea').val('');
-                    var ele = $('<div class="row row-right send">')
+                    var ele = $('<div class="row send">')
                         .append($('<div class="col col-1-2">')
                             .append($('<div class="user">')
                                 .append($('<img src="/img/nobody.jpg">'))))

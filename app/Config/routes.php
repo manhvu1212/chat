@@ -28,7 +28,9 @@
 
 Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
 Router::connect('/login', array('controller' => 'pages', 'action' => 'login'));
+Router::connect('/logout', array('controller' => 'pages', 'action' => 'logout'));
 Router::connect('/chat', array('controller' => 'chat', 'action' => 'home'));
+Router::connect('/message', array('controller' => 'chat', 'action' => 'getMessage'));
 Router::connect('/send', array('controller' => 'chat', 'action' => 'send'));
 Router::connect('/send/image', array('controller' => 'chat', 'action' => 'sendImage'));
 /**

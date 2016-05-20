@@ -3,17 +3,46 @@ App::uses('AppController', 'Controller');
 
 class ChatController extends AppController
 {
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        if (!$this->Session->check('user')) {
+            $this->redirect('/');
+        }
+    }
+
     public function home()
     {
+        $collectionChat = $this->db->chats;
+        $message = $collectionChat->find();
+        $this->set('user', json_encode($this->Session->read('user')));
+        $this->set('message', json_encode($message));
+    }
 
+    public function getMessage()
+    {
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+        }
     }
 
     public function send()
     {
-
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $data = $this->request->data;
+            $data['type'] = 'text';
+            $data['sender'] = $this->Session->read('user.id');
+            $dt = new DateTime();
+            $ts = $dt->getTimestamp();
+            $data['created_at'] = new MongoDate($ts);
+            $data['modified_at'] = new MongoDate($ts);
+            $collectionChat = $this->db->chats;
+            try {
+                $collectionChat->insert($data);
+            } catch (MongoException $e) {
+
+            }
             echo json_encode($data);
         }
     }
