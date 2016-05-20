@@ -110,9 +110,9 @@ img {
     cursor: pointer;
     line-height: initial;
     border-radius: 3px;
+    margin: auto;
     -webkit-box-shadow: none;
     box-shadow: none;
-    border: 1px solid transparent;
     background-color: #ffffff;
 }
 
@@ -140,7 +140,6 @@ img {
 
 .messages {
     overflow: auto;
-    /*height: calc(100vh - 73px);*/
     padding: 10px;
     -moz-transition: height 0.5s linear;
     -webkit-transition: height 0.5s linear;
@@ -170,6 +169,12 @@ img {
     width: 100%;
     padding: 10px;
     background-color: #4267b2;
+}
+
+.login {
+    margin: auto;
+    padding: 20px 0;
+    width: 80%;
 }
 
 .form-control {
