@@ -14,15 +14,37 @@ class ChatController extends AppController
     public function home()
     {
         $collectionChat = $this->db->chats;
-        $message = $collectionChat->find();
+        $collectionUser = $this->db->users;
+        $result = $collectionChat->find()->sort(array('created_at' => -1));
+        $messages = [];
+        foreach ($result as $message) {
+            $sender = $collectionUser->findOne(array('_id' => $message['sender']));
+            $message['sender'] = $sender;
+            $messages[] = $message;
+        }
         $this->set('user', json_encode($this->Session->read('user')));
-        $this->set('message', json_encode($message));
+        $this->set('messages', json_encode($messages));
+        $this->set('timeCurrent', json_encode($messages[0]['created_at']));
     }
 
     public function getMessage()
     {
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
+            $data = $data = $this->request->data;
+            $time = new MongoDate($data['sec'], $data['usec']);
+            $collectionChat = $this->db->chats;
+            $collectionUser = $this->db->users;
+            $result = $collectionChat->find(array('created_at' => array('$gt' => $time), 'sender' => array('$ne' => new MongoId($this->Session->read('user._id')))))->sort(array('created_at' => 1));
+            $messages = [];
+            foreach ($result as $message) {
+                $sender = $collectionUser->findOne(array('_id' => $message['sender']));
+                $message['sender'] = $sender;
+                $messages[] = $message;
+            }
+            $response['timeCurrent'] = $messages[sizeof($messages) - 1]['created_at'];
+            $response['messages'] = $messages;
+            echo json_encode($response);
         }
     }
 
@@ -32,7 +54,7 @@ class ChatController extends AppController
             $this->autoRender = false;
             $data = $this->request->data;
             $data['type'] = 'text';
-            $data['sender'] = $this->Session->read('user.id');
+            $data['sender'] = $this->Session->read('user._id');
             $dt = new DateTime();
             $ts = $dt->getTimestamp();
             $data['created_at'] = new MongoDate($ts);
@@ -67,8 +89,18 @@ class ChatController extends AppController
                 if (!file_exists(WWW_ROOT . $path)) {
                     mkdir(WWW_ROOT . $path, 0777, true);
                 }
-
                 move_uploaded_file($tmp_name, $newFile);
+
+                $data['message'] = $newFile;
+                $data['type'] = 'image';
+                $data['sender'] = $this->Session->read('user._id');
+                $dt = new DateTime();
+                $ts = $dt->getTimestamp();
+                $data['created_at'] = new MongoDate($ts);
+                $data['modified_at'] = new MongoDate($ts);
+                $collectionChat = $this->db->chats;
+                $collectionChat->insert($data);
+
                 echo $newFile;
             } else {
                 echo '';

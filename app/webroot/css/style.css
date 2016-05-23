@@ -31,10 +31,10 @@ textarea {
     height: 35px;
     max-width: 100%;
     max-height: 80px;
-    -moz-transition: height 0.5s linear;
-    -webkit-transition: height 0.5s linear;
-    -o-transition: height 0.5s linear;
-    transition: height 0.5s linear;
+    -moz-transition: height 0.2s linear;
+    -webkit-transition: height 0.2s linear;
+    -o-transition: height 0.2s linear;
+    transition: height 0.2s linear;
 }
 
 img {
@@ -139,12 +139,13 @@ img {
 }
 
 .messages {
+    position: relative;
     overflow: auto;
     padding: 10px;
-    -moz-transition: height 0.5s linear;
-    -webkit-transition: height 0.5s linear;
-    -o-transition: height 0.5s linear;
-    transition: height 0.5s linear;
+    -moz-transition: height 0.2s linear;
+    -webkit-transition: height 0.2s linear;
+    -o-transition: height 0.2s linear;
+    transition: height 0.2s linear;
 }
 
 .messages .message {
@@ -169,6 +170,10 @@ img {
     width: 100%;
     padding: 10px;
     background-color: #4267b2;
+}
+
+.btn-camera {
+    padding: 0;
 }
 
 .login {

@@ -37,6 +37,5 @@ class AppController extends Controller
     {
         $m = new MongoClient();
         $this->db = $m->chat;
-        $this->log($this->db);
     }
 }

@@ -33,6 +33,7 @@ Router::connect('/chat', array('controller' => 'chat', 'action' => 'home'));
 Router::connect('/message', array('controller' => 'chat', 'action' => 'getMessage'));
 Router::connect('/send', array('controller' => 'chat', 'action' => 'send'));
 Router::connect('/send/image', array('controller' => 'chat', 'action' => 'sendImage'));
+Router::connect('/user/avatar', array('controller' => 'pages', 'action' => 'changeAvatar'));
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
