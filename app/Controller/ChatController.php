@@ -15,16 +15,23 @@ class ChatController extends AppController
     {
         $collectionChat = $this->db->chats;
         $collectionUser = $this->db->users;
-        $result = $collectionChat->find()->sort(array('created_at' => -1));
+        $result = $collectionChat->find()->sort(array('created_at' => 1));
         $messages = [];
         foreach ($result as $message) {
-            $sender = $collectionUser->findOne(array('_id' => $message['sender']));
+            $sender = $collectionUser->findOne(array('_id' => $message['sender']), array('_id', 'avatar'));
             $message['sender'] = $sender;
             $messages[] = $message;
         }
         $this->set('user', json_encode($this->Session->read('user')));
         $this->set('messages', json_encode($messages));
-        $this->set('timeCurrent', json_encode($messages[0]['created_at']));
+        if (empty($messages)) {
+            $dt = new DateTime();
+            $ts = $dt->getTimestamp();
+            $this->set('timeCurrent', json_encode(new MongoDate($ts)));
+        } else {
+            $this->set('timeCurrent', json_encode($messages[sizeof($messages) - 1]['created_at']));
+        }
+
     }
 
     public function getMessage()
@@ -38,11 +45,13 @@ class ChatController extends AppController
             $result = $collectionChat->find(array('created_at' => array('$gt' => $time), 'sender' => array('$ne' => new MongoId($this->Session->read('user._id')))))->sort(array('created_at' => 1));
             $messages = [];
             foreach ($result as $message) {
-                $sender = $collectionUser->findOne(array('_id' => $message['sender']));
+                $sender = $collectionUser->findOne(array('_id' => $message['sender']), array('_id', 'avatar'));
                 $message['sender'] = $sender;
                 $messages[] = $message;
             }
-            $response['timeCurrent'] = $messages[sizeof($messages) - 1]['created_at'];
+            if (sizeof($messages)) {
+                $response['timeCurrent'] = $messages[sizeof($messages) - 1]['created_at'];
+            }
             $response['messages'] = $messages;
             echo json_encode($response);
         }
@@ -53,6 +62,7 @@ class ChatController extends AppController
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $data = $this->request->data;
+            $data['message'] = trim($data['message']);
             $data['type'] = 'text';
             $data['sender'] = $this->Session->read('user._id');
             $dt = new DateTime();
@@ -60,12 +70,20 @@ class ChatController extends AppController
             $data['created_at'] = new MongoDate($ts);
             $data['modified_at'] = new MongoDate($ts);
             $collectionChat = $this->db->chats;
+            $collectionUser = $this->db->users;
             try {
                 $collectionChat->insert($data);
             } catch (MongoException $e) {
 
             }
-            echo json_encode($data);
+            $result = $collectionChat->find(array('_id' => $data['_id']));
+            $messages = [];
+            foreach ($result as $message) {
+                $sender = $collectionUser->findOne(array('_id' => $message['sender']), array('_id', 'avatar'));
+                $message['sender'] = $sender;
+                $messages[] = $message;
+            }
+            echo json_encode($messages);
         }
     }
 
@@ -73,9 +91,7 @@ class ChatController extends AppController
     {
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
-
             if (!empty($_FILES['image']) && $_FILES['image']['name'] != '') {
-
                 $tmp_name = $_FILES['image']['tmp_name'];
                 $names = $_FILES['image']['name'];
                 $path = 'upload' . DS;
@@ -99,11 +115,21 @@ class ChatController extends AppController
                 $data['created_at'] = new MongoDate($ts);
                 $data['modified_at'] = new MongoDate($ts);
                 $collectionChat = $this->db->chats;
-                $collectionChat->insert($data);
+                $collectionUser = $this->db->users;
+                try {
+                    $collectionChat->insert($data);
+                } catch (MongoException $e) {
 
-                echo $newFile;
-            } else {
-                echo '';
+                }
+
+                $result = $collectionChat->find(array('_id' => $data['_id']));
+                $messages = [];
+                foreach ($result as $message) {
+                    $sender = $collectionUser->findOne(array('_id' => $message['sender']), array('_id', 'avatar'));
+                    $message['sender'] = $sender;
+                    $messages[] = $message;
+                }
+                echo json_encode($messages);
             }
         }
     }

@@ -1,38 +1,13 @@
 $(document).ready(function () {
 
+    var loading = true;
+    var preIdUser = -1;
+
     $('body').append($('<div id="container" class="container">')
         .append($('<div id="messages" class="messages">'))
         .append($('<div id="action" class="action">'))
+        .append($('<div id="contextMenu" class="context-menu">'))
     );
-
-    $.each(messages, function (i, message) {
-        if (message['sender']['_id']['$id'] == user['_id']['$id']) {
-            var ele = $('<div class="row send">');
-        } else {
-            var ele = $('<div class="row receive">');
-        }
-        if (message['type'] == 'text') {
-            eleContent = $.trim(message['message']);
-        } else {
-            eleContent = $('<img src="' + message['message'] + '">');
-        }
-
-        ele.append($('<div class="col col-1-2">')
-            .append($('<div class="user">')
-                .append($('<img src="' + message['sender']['avatar'] + '">'))))
-            .append($('<div class="col col-9">')
-                .append($('<div class="message">')
-                    .append($('<div class="content">')
-                        .html(eleContent))
-                    .append($('<div class="time">'))));
-        $('#messages').prepend(ele);
-        ele.find('.user img').load(function () {
-            $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-        });
-        ele.find('.content img').load(function () {
-            $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-        });
-    });
 
     $(window).on("load resize", function (e) {
         $('#messages').outerHeight($('#container').height() - $('#action').outerHeight());
@@ -55,34 +30,26 @@ $(document).ready(function () {
                 .append($('<button type="button" onclick="$(\'#send-image input[type=file]\').click()" class="btn btn-block btn-camera">')
                     .append($('<img src="/img/camera.png">'))))));
 
-    $('#action img').load(function () {
-        $('#messages').outerHeight($('#container').height() - $('#action').outerHeight());
-    });
+    $('#contextMenu').append($('<ul>')
+        .append($('<li>')
+            .append($('<a href="javascript:void(0)" id="deleteMessage">').html('Xóa'))));
 
     $('#send-message').submit(function (e) {
         e.preventDefault();
-        if ($.trim($('textarea').val()) != '') {
+        if ($.trim($('textarea').val()) != '' && !loading) {
             var formData = $(this).serializeArray();
             $.ajax({
                 type: 'post',
                 url: '/send',
                 dataType: 'json',
                 data: formData,
+                beforeSend: function () {
+                    loading = true;
+                },
                 success: function (response) {
                     $('textarea').val('');
-                    var ele = $('<div class="row send">')
-                        .append($('<div class="col col-1-2">')
-                            .append($('<div class="user">')
-                                .append($('<img src="' + user['avatar'] + '">'))))
-                        .append($('<div class="col col-9">')
-                            .append($('<div class="message">')
-                                .append($('<div class="content">')
-                                    .html($.trim(response['message'])))
-                                .append($('<div class="time">'))));
-                    ele.find('img').load(function () {
-                        $('#messages').append(ele);
-                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-                    });
+                    appendMessage(response);
+                    loading = false;
                 }
             });
         }
@@ -95,28 +62,16 @@ $(document).ready(function () {
             type: 'post',
             url: '/send/image',
             data: formData,
+            dataType: 'json',
             cache: false,
             processData: false,
             contentType: false,
+            beforeSend: function () {
+                loading = true;
+            },
             success: function (response) {
-                if (response != '') {
-                    var ele = $('<div class="row send">')
-                        .append($('<div class="col col-1-2">')
-                            .append($('<div class="user">')
-                                .append($('<img src="' + user['avatar'] + '">'))))
-                        .append($('<div class="col col-9">')
-                            .append($('<div class="message">')
-                                .append($('<div class="content">')
-                                    .append($('<img src="' + response + '">')))
-                                .append($('<div class="time">'))));
-                    ele.find('.user img').load(function () {
-                        $('#messages').append(ele);
-                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-                    });
-                    ele.find('.content img').load(function () {
-                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-                    });
-                }
+                appendMessage(response);
+                loading = false;
             }
         });
     });
@@ -153,10 +108,12 @@ $(document).ready(function () {
         .on('focus', function () {
             $(this).height(80);
             $('#messages').outerHeight($('#container').height() - $('#action').outerHeight() - 33);
+            $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 410);
         })
         .on('focusout', function () {
             $(this).height(35);
             $('#messages').outerHeight($('#container').height() - $('#action').outerHeight() + 33);
+            $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 410);
         })
         .keypress(function (e) {
             if (e.which == 13 && !e.shiftKey) {
@@ -165,40 +122,96 @@ $(document).ready(function () {
             }
         });
 
+
+    appendMessage(messages);
+    loading = false;
+
     setInterval(function () {
-        $.ajax({
-            type: 'post',
-            url: '/message',
-            dataType: 'json',
-            data: timeCurrent,
-            success: function (response) {
-                timeCurrent = response['timeCurrent'];
-                $.each(response['messages'], function (i, message) {
-                    if (message['sender']['_id']['$id'] == user['_id']['$id']) {
-                        var ele = $('<div class="row send">');
-                    } else {
-                        var ele = $('<div class="row receive">');
+        if (!loading) {
+            $.ajax({
+                type: 'post',
+                url: '/message',
+                dataType: 'json',
+                data: timeCurrent,
+                beforeSend: function () {
+                    loading = true;
+                },
+                success: function (response) {
+                    if (response['timeCurrent'] != null) {
+                        timeCurrent = response['timeCurrent'];
                     }
-                    if (message['type'] == 'text') {
-                        eleContent = $.trim(message['message']);
-                    } else {
-                        eleContent = $('<img src="' + message['message'] + '">');
-                    }
-                    ele.append($('<div class="col col-1-2">')
-                        .append($('<div class="user">')
-                            .append($('<img src="' + message['sender']['avatar'] + '">'))))
-                        .append($('<div class="col col-9">')
-                            .append($('<div class="message">')
-                                .append($('<div class="content">')
-                                    .html(eleContent))
-                                .append($('<div class="time">'))));
-                    $('#messages').append(ele);
-                    ele.find('.user img').load(function () {
-                        $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 50);
-                    });
-                });
-            }
-        });
+                    appendMessage(response['messages']);
+                    loading = false;
+                }
+            });
+        }
     }, 1000);
+
+    function appendMessage(messages) {
+        $.each(messages, function (i, message) {
+            var preUser = message['sender']['_id']['$id'] == preIdUser;
+            preIdUser = message['sender']['_id']['$id'];
+            if (message['sender']['_id']['$id'] == user['_id']['$id']) {
+                var ele = $('<div class="row send">');
+            } else {
+                var ele = $('<div class="row receive">');
+            }
+            var eleUser = $('<div class="col col-1-2">');
+            if (!preUser) {
+                eleUser.append($('<div class="user">').append($('<img src="' + message['sender']['avatar'] + '">')));
+            }
+            if (message['type'] == 'image') {
+                var eleContent = $('<img src="' + message['message'] + '">');
+            } else {
+                var eleContent = $.trim(message['message']);
+            }
+            var eleMessage = $('<div class="col col-9">')
+                .append($('<div class="message" data-id-message="' + message['_id']['$id'] + '">')
+                    .append($('<div class="content">')
+                        .html(eleContent))
+                    .append($('<div class="time">')));
+
+            ele.append(eleUser).append(eleMessage);
+            $('#messages').append(ele);
+            $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 5);
+            ele.find('.content img').load(function () {
+                $('#messages').animate({scrollTop: $('#messages')[0].scrollHeight}, 5);
+            });
+        });
+    };
+
+    //$('body').contextmenu(function (e) {
+    //    e.preventDefault();
+    //    if ($(e.target).hasClass('message') || $(e.target).parents().hasClass('message')) {
+    //        if ($(e.target).hasClass('message')) {
+    //            var idMessage = $(e.target).data('id-message');
+    //        } else {
+    //            var idMessage = $(e.target).parents('.message').data('id-message');
+    //        }
+    //        $('#contextMenu').css({
+    //            top: e.pageY + 'px',
+    //            left: e.pageX + 'px'
+    //        }).data('id-message', idMessage).addClass('show');
+    //    } else {
+    //        $('#contextMenu').hide();
+    //    }
+    //});
+    //
+    //$('body').click(function () {
+    //    $('#contextMenu').hide();
+    //});
+    //
+    //$('#deleteMessage').click(function (e) {
+    //    var idMessage = $('#contextMenu').data('id-message');
+    //    $.ajax({
+    //        type: 'post',
+    //        url: '/delete',
+    //        dataType: 'json',
+    //        data: idMessage,
+    //        success: function (response) {
+    //
+    //        }
+    //    });
+    //});
 
 });
