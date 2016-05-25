@@ -199,7 +199,6 @@ $(document).ready(function () {
                 });
             }
         });
-    }, 3000);
+    }, 1000);
 
-    //$('#messages').append($('<div class="notification">').html('Có tin nhắn mới'));
 });
