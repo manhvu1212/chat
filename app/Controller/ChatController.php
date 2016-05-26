@@ -27,9 +27,11 @@ class ChatController extends AppController
         if (empty($messages)) {
             $dt = new DateTime();
             $ts = $dt->getTimestamp();
-            $this->set('timeCurrent', json_encode(new MongoDate($ts)));
+            $this->set('timeEnd', json_encode(new MongoDate($ts)));
+            $this->set('timeStart', json_encode(new MongoDate($ts)));
         } else {
-            $this->set('timeCurrent', json_encode($messages[sizeof($messages) - 1]['created_at']));
+            $this->set('timeEnd', json_encode($messages[sizeof($messages) - 1]['created_at']));
+            $this->set('timeStart', json_encode($messages[0]['created_at']));
         }
 
     }
@@ -50,7 +52,7 @@ class ChatController extends AppController
                 $messages[] = $message;
             }
             if (sizeof($messages)) {
-                $response['timeCurrent'] = $messages[sizeof($messages) - 1]['created_at'];
+                $response['timeEnd'] = $messages[sizeof($messages) - 1]['created_at'];
             }
             $response['messages'] = $messages;
             echo json_encode($response);
@@ -62,7 +64,7 @@ class ChatController extends AppController
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $data = $this->request->data;
-            $data['message'] = trim($data['message']);
+            $data['message'] = htmlspecialchars(trim($data['message']), ENT_QUOTES);
             $data['type'] = 'text';
             $data['sender'] = $this->Session->read('user._id');
             $dt = new DateTime();
@@ -107,7 +109,7 @@ class ChatController extends AppController
                 }
                 move_uploaded_file($tmp_name, $newFile);
 
-                $data['message'] = $newFile;
+                $data['message'] = htmlspecialchars($newFile, ENT_QUOTES);
                 $data['type'] = 'image';
                 $data['sender'] = $this->Session->read('user._id');
                 $dt = new DateTime();

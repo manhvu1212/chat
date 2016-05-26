@@ -65,7 +65,6 @@ class PagesController extends AppController
                 move_uploaded_file($tmp_name, $newFile);
 
                 $collectionUser = $this->db->users;
-
                 $collectionUser->update(
                     array('_id' => new MongoId($this->Session->read('user._id'))),
                     array('$set' => array('avatar' => $newFile))

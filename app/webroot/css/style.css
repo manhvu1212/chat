@@ -43,8 +43,9 @@ a {
 }
 
 img {
-    width: 100%;
+    max-width: 100%;
     height: auto;
+    max-height: 200px;
     vertical-align: middle;
 }
 
@@ -141,7 +142,6 @@ img {
 }
 
 .user img {
-    max-width: 45px;
     border-radius: 100%;
     border: 1px solid #cccccc;
     margin: auto;
@@ -169,10 +169,6 @@ img {
     text-align: right;
 }
 
-.messages .message .content img {
-
-}
-
 .action {
     position: absolute;
     bottom: 0;
@@ -196,34 +192,11 @@ img {
     margin-bottom: 10px;
 }
 
-.context-menu {
-    position: fixed;
+.new-message {
+    position: absolute;
+    top: -40px;
+    right: 30px;
     display: none;
-    background-color: #fff;
-    border: 1px solid #CCCCCC;
-}
-
-.send .context-menu .show {
-    display: block;
-}
-
-.context-menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.context-menu ul li {
-    padding: 0;
-}
-
-.context-menu ul li:hover {
-    background-color: #cccccc;
-}
-
-.context-menu ul li a {
-    display: block;
-    padding: 5px 12px;
 }
 
 @media (min-width: 480px) {
